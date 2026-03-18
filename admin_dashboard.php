@@ -60,8 +60,7 @@ $treinos = $sql->fetchAll();
 <h1 class="logo">Painel do Instrutor</h1>
 
 <div class="header-buttons">
-<a href="index.php"><button type="button">Home</button></a>
-<a href="logout.php"><button type="button">Sair</button></a>
+<a href="index.php"><button type="button">Sair</button></a>
 </div>
 
 </div>
