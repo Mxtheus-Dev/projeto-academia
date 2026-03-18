@@ -57,7 +57,7 @@ nav a:hover {
 }
 
 /* ============================
-   BOTÕES (GLOBAL)
+   BOTÕES
 ============================ */
 button {
     background: #ffd000;
@@ -71,17 +71,16 @@ button {
 
 button:hover {
     background: #e6c200;
-    transform: scale(1.05); /* efeito moderno */
+    transform: scale(1.05);
 }
 
-/* BOTÕES DO HEADER */
 .header-buttons {
     display: flex;
     gap: 10px;
 }
 
 /* ============================
-   HERO (CAPA)
+   HERO
 ============================ */
 .hero {
     height: 85vh;
@@ -91,7 +90,6 @@ button:hover {
     position: relative;
 }
 
-/* overlay escuro (melhora visual) */
 .hero::before {
     content: "";
     position: absolute;
@@ -154,7 +152,6 @@ button:hover {
     margin-bottom: 20px;
 }
 
-/* PLANO DESTACADO */
 .destaque {
     border: 2px solid #ffd000;
     box-shadow: 0 0 15px rgba(255, 208, 0, 0.3);
@@ -189,7 +186,7 @@ button:hover {
 }
 
 /* ============================
-   FORMULÁRIOS (LOGIN/CADASTRO)
+   FORMULÁRIOS
 ============================ */
 form {
     width: 350px;
@@ -204,7 +201,6 @@ form {
 
 form h2 {
     text-align: center;
-    margin-bottom: 10px;
 }
 
 input, select {
@@ -229,15 +225,6 @@ input, select {
     margin-bottom: 30px;
 }
 
-.aluno-info h1 {
-    margin-bottom: 15px;
-}
-
-.aluno-info p {
-    margin: 6px 0;
-}
-
-/* BOTÕES DO ALUNO */
 .menu-aluno {
     margin-top: 15px;
     display: flex;
@@ -245,7 +232,7 @@ input, select {
 }
 
 /* ============================
-   TABELAS (TREINOS / ALUNOS)
+   TABELAS
 ============================ */
 .treinos-container {
     max-width: 900px;
@@ -272,6 +259,36 @@ td {
     padding: 12px;
     text-align: center;
     border-bottom: 1px solid #333;
+    height: 60px;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================
+   BOTÕES DE AÇÃO
+============================ */
+.acoes {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-concluir {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-excluir {
+    background: #ef4444;
+    color: white;
+}
+
+.acoes button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
 }
 
 /* ============================
@@ -282,25 +299,6 @@ footer {
     text-align: center;
     padding: 25px;
     margin-top: 60px;
-}
-
-/* ============================
-   MENU INTERNO
-============================ */
-.menu-interno {
-    margin-left: auto;
-    display: flex;
-    gap: 25px;
-}
-
-.menu-interno a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.menu-interno a:hover {
-    color: #ffd000;
 }
 
 /* ============================

@@ -1,42 +1,58 @@
 <?php
+/* ============================
+   CONEXÃO + SESSÃO
+============================ */
+
 // Importa conexão com banco
 require "database.php";
 
 // Inicia sessão
 session_start();
 
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    // Captura os dados
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
+/* ============================
+   PROCESSAR LOGIN
+============================ */
 
-    /* ============================
-       BUSCAR USUÁRIO PELO EMAIL
-    ============================ */
-    $sql = $db->prepare("SELECT * FROM usuarios WHERE email = ?");
-    $sql->execute([$email]);
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    $user = $sql->fetch();
+    // Captura dados com segurança
+    $email = $_POST['email'] ?? '';
+    $senha = $_POST['senha'] ?? '';
 
-    /* ============================
-       VERIFICAR SENHA CRIPTOGRAFADA
-    ============================ */
-    if ($user && password_verify($senha, $user['senha'])) {
+    // Validação básica
+    if (!empty($email) && !empty($senha)) {
 
-        // Cria sessão
-        $_SESSION['usuario'] = $user['id'];
+        /* ============================
+           BUSCAR USUÁRIO
+        ============================ */
+        $sql = $db->prepare("SELECT * FROM usuarios WHERE email = ?");
+        $sql->execute([$email]);
 
-        // Redireciona
-        header("Location: area_aluno.php");
-        exit;
+        $user = $sql->fetch();
+
+        /* ============================
+           VERIFICAR SENHA
+        ============================ */
+        if ($user && password_verify($senha, $user['senha'])) {
+
+            // Cria sessão
+            $_SESSION['usuario'] = $user['id'];
+
+            // Redireciona
+            header("Location: area_aluno.php");
+            exit;
+
+        } else {
+            $erro = "Email ou senha inválidos";
+        }
 
     } else {
-        $erro = "Login inválido";
+        $erro = "Preencha todos os campos";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -48,7 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
@@ -63,22 +81,39 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     </div>
 </header>
 
-<!-- FORMULÁRIO -->
+
+<!-- ============================
+     FORMULÁRIO
+============================ -->
 <form method="POST">
 
     <h2>Login do Aluno</h2>
 
-    <!-- Exibe erro -->
-    <?php if (isset($erro)) { ?>
-        <p style="color:red;"><?php echo $erro; ?></p>
-    <?php } ?>
+    <!-- ERRO -->
+    <?php if (isset($erro)): ?>
+        <p class="erro"><?= htmlspecialchars($erro) ?></p>
+    <?php endif; ?>
 
-    <input type="email" name="email" placeholder="Email" required>
+    <!-- CAMPOS -->
+    <input 
+        type="email" 
+        name="email" 
+        placeholder="Email" 
+        value="<?= htmlspecialchars($email ?? '') ?>"
+        required
+    >
 
-    <input type="password" name="senha" placeholder="Senha" required>
+    <input 
+        type="password" 
+        name="senha" 
+        placeholder="Senha" 
+        required
+    >
 
+    <!-- BOTÃO -->
     <button type="submit">Entrar</button>
 
+    <!-- LINK CADASTRO -->
     <p style="text-align:center;margin-top:10px;">
         Não tem conta?
         <a href="cadastro.php">Criar conta</a>

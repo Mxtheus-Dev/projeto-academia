@@ -1,4 +1,8 @@
 <?php
+/* ============================
+   INÍCIO DA SESSÃO E SEGURANÇA
+============================ */
+
 // Inicia a sessão
 session_start();
 
@@ -8,33 +12,59 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
+
+/* ============================
+   CONEXÃO COM O BANCO
+============================ */
+
 // Importa conexão com banco de dados
 require "database.php";
+
+
+/* ============================
+   BUSCAR USUÁRIOS
+============================ */
 
 // Busca todos os usuários cadastrados
 $usuarios = $db->query("SELECT * FROM usuarios");
 
+
+/* ============================
+   PROCESSAR FORMULÁRIO
+============================ */
+
 // Verifica se o formulário foi enviado via POST
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    // Captura os dados do formulário
-    $usuario = $_POST['usuario'];
-    $dia = $_POST['dia'];
-    $exercicio = $_POST['exercicio'];
-    $series = $_POST['series'];
-    $repeticoes = $_POST['repeticoes'];
+    // Captura e limpa os dados do formulário
+    $usuario    = $_POST['usuario'] ?? null;
+    $dia        = $_POST['dia'] ?? '';
+    $exercicio  = $_POST['exercicio'] ?? '';
+    $series     = $_POST['series'] ?? '';
+    $repeticoes = $_POST['repeticoes'] ?? '';
 
-    // Prepara o SQL para evitar SQL Injection
-    $sql = $db->prepare("
-        INSERT INTO treinos
-        (usuario_id, dia, exercicio, series, repeticoes)
-        VALUES (?, ?, ?, ?, ?)
-    ");
+    // Validação simples (evita dados vazios)
+    if ($usuario && $dia && $exercicio && $series && $repeticoes) {
 
-    // Executa o insert com os dados
-    $sql->execute([$usuario, $dia, $exercicio, $series, $repeticoes]);
+        // Prepara o SQL para evitar SQL Injection
+        $sql = $db->prepare("
+            INSERT INTO treinos 
+            (usuario_id, dia, exercicio, series, repeticoes) 
+            VALUES (?, ?, ?, ?, ?)
+        ");
+
+        // Executa o insert com os dados
+        $sql->execute([
+            $usuario,
+            $dia,
+            $exercicio,
+            $series,
+            $repeticoes
+        ]);
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -46,31 +76,38 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <body>
 
-<!-- Cabeçalho -->
+<!-- ============================
+     CABEÇALHO
+============================ -->
 <header>
     <div class="header-container">
         <h1 class="logo">Physical Center</h1>
 
         <div class="header-buttons">
             <a href="admin_dashboard.php">
-                <button>Voltar</button>
+                <button type="button">Voltar</button>
             </a>
         </div>
     </div>
 </header>
 
-<!-- Formulário -->
+
+<!-- ============================
+     FORMULÁRIO
+============================ -->
 <form method="POST">
 
     <h2>Adicionar Treino</h2>
 
     <!-- Seleção de usuário -->
     <select name="usuario" required>
-        <?php foreach ($usuarios as $user) { ?>
-            <option value="<?php echo $user['id']; ?>">
-                <?php echo $user['nome']; ?>
+        <option value="">Selecione um usuário</option>
+
+        <?php foreach ($usuarios as $user): ?>
+            <option value="<?= $user['id']; ?>">
+                <?= $user['nome']; ?>
             </option>
-        <?php } ?>
+        <?php endforeach; ?>
     </select>
 
     <!-- Campos do treino -->

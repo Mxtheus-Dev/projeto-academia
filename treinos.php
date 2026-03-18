@@ -1,27 +1,40 @@
 <?php
-// Importa banco
-require "database.php";
+/* ============================
+   CONEXÃO + SESSÃO
+============================ */
 
-// Inicia sessão
+require "database.php";
 session_start();
 
-// Verifica login
+
+/* ============================
+   SEGURANÇA
+============================ */
+
 if (!isset($_SESSION['usuario'])) {
     header("Location: login.php");
     exit;
 }
 
-// ID do usuário logado
 $id = $_SESSION['usuario'];
 
+
 /* ============================
-   BUSCAR TREINOS DO USUÁRIO
+   BUSCAR TREINOS
 ============================ */
-$sql = $db->prepare("SELECT * FROM treinos WHERE usuario_id = ?");
+
+$sql = $db->prepare("
+    SELECT * 
+    FROM treinos 
+    WHERE usuario_id = ?
+    ORDER BY id DESC
+");
+
 $sql->execute([$id]);
 
 $treinos = $sql->fetchAll();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -33,7 +46,9 @@ $treinos = $sql->fetchAll();
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
@@ -54,10 +69,17 @@ $treinos = $sql->fetchAll();
     </div>
 </header>
 
-<!-- CONTEÚDO -->
+
+<!-- ============================
+     CONTEÚDO
+============================ -->
 <div class="treinos-container">
 
     <h2>Meus Treinos</h2>
+
+    <?php if (count($treinos) === 0): ?>
+        <p>Nenhum treino disponível ainda.</p>
+    <?php else: ?>
 
     <table>
 
@@ -66,20 +88,30 @@ $treinos = $sql->fetchAll();
             <th>Exercício</th>
             <th>Séries</th>
             <th>Repetições</th>
+            <th>Status</th>
         </tr>
 
-        <?php foreach ($treinos as $treino) { ?>
-
+        <?php foreach ($treinos as $treino): ?>
             <tr>
-                <td><?php echo htmlspecialchars($treino['dia']); ?></td>
-                <td><?php echo htmlspecialchars($treino['exercicio']); ?></td>
-                <td><?php echo htmlspecialchars($treino['series']); ?></td>
-                <td><?php echo htmlspecialchars($treino['repeticoes']); ?></td>
-            </tr>
 
-        <?php } ?>
+                <td><?= htmlspecialchars($treino['dia']) ?></td>
+                <td><?= htmlspecialchars($treino['exercicio']) ?></td>
+                <td><?= htmlspecialchars($treino['series']) ?></td>
+                <td><?= htmlspecialchars($treino['repeticoes']) ?></td>
+
+                <!-- STATUS -->
+                <td>
+                    <?= $treino['status'] === 'concluido' 
+                        ? '✅ Concluído' 
+                        : '⏳ Pendente' ?>
+                </td>
+
+            </tr>
+        <?php endforeach; ?>
 
     </table>
+
+    <?php endif; ?>
 
 </div>
 

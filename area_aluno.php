@@ -1,9 +1,18 @@
 <?php
+/* ============================
+   CONEXÃO + SESSÃO
+============================ */
+
 // Importa conexão com banco
 require "database.php";
 
 // Inicia sessão
 session_start();
+
+
+/* ============================
+   SEGURANÇA
+============================ */
 
 // Verifica se o usuário está logado
 if (!isset($_SESSION['usuario'])) {
@@ -11,19 +20,28 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-// Pega o ID do usuário logado
+// ID do usuário logado
 $id = $_SESSION['usuario'];
+
 
 /* ============================
    BUSCAR DADOS DO USUÁRIO
 ============================ */
 
-// Usando prepare 
+// Prepara a consulta (seguro contra SQL Injection)
 $sql = $db->prepare("SELECT * FROM usuarios WHERE id = ?");
 $sql->execute([$id]);
 
 $user = $sql->fetch();
+
+// Se não encontrar usuário (extra segurança)
+if (!$user) {
+    session_destroy();
+    header("Location: login.php");
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -35,7 +53,9 @@ $user = $sql->fetch();
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
@@ -56,21 +76,24 @@ $user = $sql->fetch();
     </div>
 </header>
 
-<!-- CONTEÚDO DO ALUNO -->
+
+<!-- ============================
+     CONTEÚDO DO ALUNO
+============================ -->
 <div class="aluno-container">
 
     <div class="aluno-info">
 
         <h1>Área do Aluno</h1>
 
-        <!-- Dados do usuário (com segurança) -->
-        <p><strong>Nome:</strong> <?php echo htmlspecialchars($user['nome']); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-        <p><strong>Telefone:</strong> <?php echo htmlspecialchars($user['telefone']); ?></p>
-        <p><strong>Idade:</strong> <?php echo htmlspecialchars($user['idade']); ?></p>
-        <p><strong>Plano:</strong> <?php echo htmlspecialchars($user['plano']); ?></p>
+        <!-- DADOS DO USUÁRIO -->
+        <p><strong>Nome:</strong> <?= htmlspecialchars($user['nome']) ?></p>
+        <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+        <p><strong>Telefone:</strong> <?= htmlspecialchars($user['telefone']) ?></p>
+        <p><strong>Idade:</strong> <?= htmlspecialchars($user['idade']) ?></p>
+        <p><strong>Plano:</strong> <?= htmlspecialchars($user['plano']) ?></p>
 
-        <!-- Menu -->
+        <!-- MENU -->
         <div class="menu-aluno">
 
             <a href="treinos.php">

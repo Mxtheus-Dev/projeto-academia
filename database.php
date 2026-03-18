@@ -1,17 +1,23 @@
 <?php
+
+/* ============================
+   CONEXÃO COM BANCO (SQLITE)
+============================ */
+
 try {
 
-    /* ============================
-       CONEXÃO COM BANCO SQLITE
-    ============================ */
+    // Cria conexão com SQLite
     $db = new PDO("sqlite:academia.db");
 
     // Ativa erros como exceção (melhor debug)
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+
     /* ============================
-       TABELA: USUÁRIOS
+       CRIAÇÃO DAS TABELAS
     ============================ */
+
+    // Tabela de usuários
     $db->exec("
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,9 +30,7 @@ try {
         )
     ");
 
-    /* ============================
-       TABELA: PLANOS
-    ============================ */
+    // Tabela de planos
     $db->exec("
         CREATE TABLE IF NOT EXISTS planos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,9 +40,7 @@ try {
         )
     ");
 
-    /* ============================
-       TABELA: TREINOS
-    ============================ */
+    // Tabela de treinos
     $db->exec("
         CREATE TABLE IF NOT EXISTS treinos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,15 +49,26 @@ try {
             exercicio TEXT,
             series TEXT,
             repeticoes TEXT,
+            status TEXT DEFAULT 'pendente',
 
-            -- Relacionamento com usuários
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
         )
     ");
 
+    // Tabela de admin
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS admin (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario TEXT UNIQUE,
+            senha TEXT
+        )
+    ");
+
+
     /* ============================
        INSERIR PLANOS PADRÃO
     ============================ */
+
     $checkPlanos = $db->query("SELECT COUNT(*) as total FROM planos")->fetch();
 
     if ($checkPlanos['total'] == 0) {
@@ -68,34 +81,37 @@ try {
         ");
     }
 
-    /* ============================
-       TABELA: ADMIN
-    ============================ */
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS admin (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            usuario TEXT,
-            senha TEXT
-        )
-    ");
 
     /* ============================
        CRIAR ADMIN PADRÃO
     ============================ */
+
     $checkAdmin = $db->query("SELECT COUNT(*) as total FROM admin")->fetch();
 
     if ($checkAdmin['total'] == 0) {
 
-        // Senha criptografada
+        // Gera hash seguro da senha
         $senhaHash = password_hash("1234", PASSWORD_DEFAULT);
 
-        $sql = $db->prepare("INSERT INTO admin (usuario, senha) VALUES (?, ?)");
+        $sql = $db->prepare("
+            INSERT INTO admin (usuario, senha) 
+            VALUES (?, ?)
+        ");
+
         $sql->execute(["admin", $senhaHash]);
     }
 
+
 } catch (PDOException $e) {
 
-    // Exibe erro 
-    echo "Erro: " . $e->getMessage();
+    /* ============================
+       TRATAMENTO DE ERRO
+    ============================ */
+
+    // Em produção, o ideal é não mostrar erro direto
+    echo "Erro ao conectar com o banco.";
+    
+    // Debug (usar só em desenvolvimento)
+    // echo $e->getMessage();
 }
 ?>

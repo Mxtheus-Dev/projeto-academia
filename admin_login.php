@@ -1,40 +1,51 @@
 <?php
-// Importa conexão com banco
-require "database.php";
+/* ============================
+   CONEXÃO + SESSÃO
+============================ */
 
-// Inicia sessão
+require "database.php";
 session_start();
 
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    // Captura os dados do formulário
-    $user = $_POST['usuario'];
-    $senha = $_POST['senha'];
+/* ============================
+   PROCESSAR LOGIN
+============================ */
 
-    // Prepara a consulta para evitar SQL Injection
-    $sql = $db->prepare("SELECT * FROM admin WHERE usuario = ? AND senha = ?");
-    $sql->execute([$user, $senha]);
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    // Busca o admin
-    $admin = $sql->fetch();
+    // Captura os dados com segurança
+    $user  = $_POST['usuario'] ?? '';
+    $senha = $_POST['senha'] ?? '';
 
-    // Se encontrou o admin
-    if ($admin) {
+    // Validação básica
+    if (!empty($user) && !empty($senha)) {
 
-        // Salva sessão
-        $_SESSION['admin'] = $admin['id'];
+        // Busca admin pelo usuário
+        $sql = $db->prepare("SELECT * FROM admin WHERE usuario = ?");
+        $sql->execute([$user]);
 
-        // Redireciona para o painel
-        header("Location: admin_dashboard.php");
-        exit;
+        $admin = $sql->fetch();
+
+        // Verifica se existe e se a senha está correta
+        if ($admin && password_verify($senha, $admin['senha'])) {
+
+            // Cria sessão do admin
+            $_SESSION['admin'] = $admin['id'];
+
+            // Redireciona para o painel
+            header("Location: admin_dashboard.php");
+            exit;
+
+        } else {
+            $erro = "Usuário ou senha inválidos";
+        }
 
     } else {
-        // Mensagem de erro
-        $erro = "Login inválido";
+        $erro = "Preencha todos os campos";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -46,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
@@ -61,20 +74,34 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     </div>
 </header>
 
-<!-- FORMULÁRIO -->
+
+<!-- ============================
+     FORMULÁRIO
+============================ -->
 <form method="POST">
 
     <h2>Login Instrutor</h2>
 
-    <!-- Exibe erro se existir -->
-    <?php if (isset($erro)) { ?>
-        <p style="color:red;"><?php echo $erro; ?></p>
-    <?php } ?>
+    <!-- ERRO -->
+    <?php if (isset($erro)): ?>
+        <p class="erro"><?= htmlspecialchars($erro) ?></p>
+    <?php endif; ?>
 
-    <input name="usuario" placeholder="Usuário" required>
+    <!-- CAMPOS -->
+    <input 
+        name="usuario" 
+        placeholder="Usuário" 
+        required
+    >
 
-    <input type="password" name="senha" placeholder="Senha" required>
+    <input 
+        type="password" 
+        name="senha" 
+        placeholder="Senha" 
+        required
+    >
 
+    <!-- BOTÃO -->
     <button type="submit">Entrar</button>
 
 </form>

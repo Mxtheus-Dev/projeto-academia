@@ -1,51 +1,73 @@
 <?php
-// Importa conexão com banco
+/* ============================
+   CONEXÃO COM BANCO
+============================ */
+
 require "database.php";
 
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    // Captura os dados do formulário
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-    $telefone = $_POST['telefone'];
-    $idade = $_POST['idade'];
+/* ============================
+   PROCESSAR FORMULÁRIO
+============================ */
 
-    /* ============================
-       VERIFICAR SE EMAIL JÁ EXISTE
-    ============================ */
-    $check = $db->prepare("SELECT * FROM usuarios WHERE email = ?");
-    $check->execute([$email]);
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    if ($check->rowCount() > 0) {
+    // Captura os dados com segurança
+    $nome     = $_POST['nome'] ?? '';
+    $email    = $_POST['email'] ?? '';
+    $senha    = $_POST['senha'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $idade    = $_POST['idade'] ?? '';
 
-        $erro = "Este email já está cadastrado.";
+    // Validação básica
+    if ($nome && $email && $senha && $telefone && $idade) {
+
+        /* ============================
+           VERIFICAR SE EMAIL EXISTE
+        ============================ */
+        $check = $db->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $check->execute([$email]);
+
+        if ($check->rowCount() > 0) {
+
+            $erro = "Este email já está cadastrado.";
+
+        } else {
+
+            /* ============================
+               CRIPTOGRAFAR SENHA
+            ============================ */
+            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+            /* ============================
+               INSERIR USUÁRIO
+            ============================ */
+            $sql = $db->prepare("
+                INSERT INTO usuarios 
+                (nome, email, senha, telefone, idade, plano)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+
+            $sql->execute([
+                $nome,
+                $email,
+                $senhaHash,
+                $telefone,
+                $idade,
+                'Mensal'
+            ]);
+
+            // Redireciona para login
+            header("Location: login.php");
+            exit;
+        }
 
     } else {
-
-        /* ============================
-           CRIPTOGRAFAR SENHA
-        ============================ */
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-        /* ============================
-           INSERIR USUÁRIO
-        ============================ */
-        $sql = $db->prepare("
-            INSERT INTO usuarios
-            (nome, email, senha, telefone, idade, plano)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
-        $sql->execute([$nome, $email, $senhaHash, $telefone, $idade, 'Mensal']);
-
-        // Redireciona para login
-        header("Location: login.php");
-        exit;
+        $erro = "Preencha todos os campos.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -57,7 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
@@ -72,28 +96,61 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     </div>
 </header>
 
-<!-- FORMULÁRIO -->
+
+<!-- ============================
+     FORMULÁRIO
+============================ -->
 <form method="POST">
 
     <h2>Criar Conta</h2>
 
-    <!-- Exibir erro -->
-    <?php if (isset($erro)) { ?>
-        <p style="color:red;"><?php echo $erro; ?></p>
-    <?php } ?>
+    <!-- ERRO -->
+    <?php if (isset($erro)): ?>
+        <p class="erro"><?= htmlspecialchars($erro) ?></p>
+    <?php endif; ?>
 
-    <input name="nome" placeholder="Nome" required>
+    <!-- CAMPOS -->
+    <input 
+        name="nome" 
+        placeholder="Nome" 
+        value="<?= htmlspecialchars($nome ?? '') ?>" 
+        required
+    >
 
-    <input type="email" name="email" placeholder="Email" required>
+    <input 
+        type="email" 
+        name="email" 
+        placeholder="Email" 
+        value="<?= htmlspecialchars($email ?? '') ?>" 
+        required
+    >
 
-    <input type="password" name="senha" placeholder="Senha" required>
+    <input 
+        type="password" 
+        name="senha" 
+        placeholder="Senha" 
+        required
+    >
 
-    <input name="telefone" placeholder="Telefone" required>
+    <input 
+        name="telefone" 
+        placeholder="Telefone" 
+        value="<?= htmlspecialchars($telefone ?? '') ?>" 
+        required
+    >
 
-    <input type="number" name="idade" placeholder="Idade" required>
+    <input 
+        type="number" 
+        name="idade" 
+        placeholder="Idade" 
+        value="<?= htmlspecialchars($idade ?? '') ?>" 
+        required
+    >
 
+    <!-- BOTÃO -->
     <button type="submit">Cadastrar</button>
 
+    <!-- LINK LOGIN -->
     <p style="text-align:center;margin-top:10px;">
         Já tem conta?
         <a href="login.php">Entrar</a>

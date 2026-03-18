@@ -1,23 +1,26 @@
 <?php
+/* ============================
+   CONEXÃO COM BANCO
+============================ */
+
 require "database.php";
 
+
 /* ============================
-   CAPTURAR DADOS DO FORMULÁRIO
+   CAPTURAR DADOS
 ============================ */
-$nome = $_POST['nome'] ?? '';
+
+$nome     = $_POST['nome'] ?? '';
 $telefone = $_POST['telefone'] ?? '';
-$plano = $_POST['plano'] ?? '';
+$plano    = $_POST['plano'] ?? '';
 
-// Data atual
-$data = date("Y-m-d");
-
-// Mensagem de status
 $msg_status = "";
+
 
 try {
 
     /* ============================
-       VALIDAR DADOS
+       VALIDAÇÃO
     ============================ */
     if (empty($nome) || empty($telefone) || empty($plano)) {
         throw new Exception("Preencha todos os campos.");
@@ -28,28 +31,28 @@ try {
     ============================ */
     $sql = $db->prepare("
         INSERT INTO usuarios (nome, telefone, plano)
-        VALUES (:nome, :telefone, :plano)
+        VALUES (?, ?, ?)
     ");
 
     $sql->execute([
-        ':nome' => $nome,
-        ':telefone' => $telefone,
-        ':plano' => $plano
+        $nome,
+        $telefone,
+        $plano
     ]);
 
     /* ============================
-       VERIFICAR INSERÇÃO
+       SUCESSO
     ============================ */
-    $id = $db->lastInsertId();
-
-    if ($id) {
-        $msg_status = "Sucesso!";
+    if ($db->lastInsertId()) {
+        $msg_status = "sucesso";
     } else {
-        $msg_status = "Erro ao cadastrar.";
+        $msg_status = "erro";
     }
 
 } catch (Exception $e) {
-    $msg_status = "Erro: " . $e->getMessage();
+
+    $msg_status = "erro";
+    $erro = $e->getMessage();
 }
 ?>
 
@@ -58,19 +61,42 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Resultado</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Resultado do Cadastro</h1>
+<div class="container" style="text-align:center; margin-top:80px;">
 
-<p><?php echo htmlspecialchars($msg_status); ?></p>
+    <h1>Resultado do Cadastro</h1>
 
-<?php if ($msg_status == "Sucesso!") { ?>
-    <p><?php echo htmlspecialchars($nome); ?> cadastrado com sucesso!</p>
-<?php } ?>
+    <?php if ($msg_status === "sucesso"): ?>
+        
+        <p style="color: #22c55e; font-weight: bold;">
+            ✅ Cadastro realizado com sucesso!
+        </p>
 
-<a href="alunos.php">Voltar</a>
+        <p><?= htmlspecialchars($nome) ?> foi cadastrado.</p>
+
+    <?php else: ?>
+
+        <p style="color: #ef4444; font-weight: bold;">
+            ❌ Erro ao cadastrar
+        </p>
+
+        <?php if (isset($erro)): ?>
+            <p><?= htmlspecialchars($erro) ?></p>
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+    <br>
+
+    <a href="alunos.php">
+        <button type="button">Voltar</button>
+    </a>
+
+</div>
 
 </body>
 </html>

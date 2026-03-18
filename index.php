@@ -1,12 +1,22 @@
 <?php
-// Importa conexão com banco
+/* ============================
+   CONEXÃO COM BANCO
+============================ */
+
 require "database.php";
 
+
 /* ============================
-   BUSCAR PLANOS DO BANCO
+   BUSCAR PLANOS
 ============================ */
-$planos = $db->query("SELECT * FROM planos");
+
+// Executa consulta
+$stmt = $db->query("SELECT * FROM planos");
+
+// Converte para array
+$planos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -18,13 +28,16 @@ $planos = $db->query("SELECT * FROM planos");
 
 <body>
 
-<!-- HEADER -->
+<!-- ============================
+     HEADER
+============================ -->
 <header>
     <div class="header-container">
 
         <h1 class="logo">Physical Center</h1>
 
         <div class="header-buttons">
+
             <a href="login.php">
                 <button type="button">Área do Aluno</button>
             </a>
@@ -32,12 +45,16 @@ $planos = $db->query("SELECT * FROM planos");
             <a href="admin_login.php">
                 <button type="button">Área do Instrutor</button>
             </a>
+
         </div>
 
     </div>
 </header>
 
-<!-- HERO (DESTAQUE) -->
+
+<!-- ============================
+     HERO (DESTAQUE)
+============================ -->
 <section class="hero">
 
     <div class="hero-content">
@@ -51,34 +68,46 @@ $planos = $db->query("SELECT * FROM planos");
 
 </section>
 
-<!-- PLANOS -->
+
+<!-- ============================
+     PLANOS
+============================ -->
 <section class="planos">
 
     <h2>Nossos Planos</h2>
 
     <div class="cards">
 
-        <?php foreach ($planos as $plano) { ?>
+        <?php if (count($planos) > 0): ?>
 
-            <div class="card">
+            <?php foreach ($planos as $plano): ?>
+                <div class="card">
 
-                <h3><?php echo htmlspecialchars($plano['nome']); ?></h3>
+                    <h3><?= htmlspecialchars($plano['nome']) ?></h3>
 
-                <p>
-                    R$ <?php echo number_format($plano['preco'], 2, ',', '.'); ?>
-                </p>
+                    <p>
+                        R$ <?= number_format($plano['preco'], 2, ',', '.') ?>
+                    </p>
 
-                <button type="button">Assinar</button>
+                    <button type="button">Assinar</button>
 
-            </div>
+                </div>
+            <?php endforeach; ?>
 
-        <?php } ?>
+        <?php else: ?>
+
+            <p>Nenhum plano disponível no momento.</p>
+
+        <?php endif; ?>
 
     </div>
 
 </section>
 
-<!-- BENEFÍCIOS -->
+
+<!-- ============================
+     BENEFÍCIOS
+============================ -->
 <section class="beneficios">
 
     <h2>Por que treinar aqui?</h2>
@@ -92,7 +121,10 @@ $planos = $db->query("SELECT * FROM planos");
 
 </section>
 
-<!-- RODAPÉ -->
+
+<!-- ============================
+     RODAPÉ
+============================ -->
 <footer>
     <p>Academia Physical Center - 2026 - Porto Alegre</p>
 </footer>
