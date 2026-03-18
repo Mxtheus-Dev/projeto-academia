@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         <div class="header-buttons">
             <a href="index.php">
-                <button type="button">Voltar para Home</button>
+                <button type="button">Voltar</button>
             </a>
         </div>
 
