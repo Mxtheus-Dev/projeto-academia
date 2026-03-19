@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $exercicio  = $_POST['exercicio'] ?? '';
     $series     = $_POST['series'] ?? '';
     $repeticoes = $_POST['repeticoes'] ?? '';
+    $carga = $_POST['carga'];
 
     // Validação simples (evita dados vazios)
     if ($usuario && $dia && $exercicio && $series && $repeticoes) {
@@ -49,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         // Prepara o SQL para evitar SQL Injection
         $sql = $db->prepare("
             INSERT INTO treinos 
-            (usuario_id, dia, exercicio, series, repeticoes) 
-            VALUES (?, ?, ?, ?, ?)
+            (usuario_id, dia, exercicio, series, repeticoes, carga) 
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
 
         // Executa o insert com os dados
@@ -59,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $dia,
             $exercicio,
             $series,
-            $repeticoes
+            $repeticoes,
+            $carga
         ]);
     }
 }
@@ -115,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <input name="exercicio" placeholder="Exercício" required>
     <input name="series" placeholder="Séries" required>
     <input name="repeticoes" placeholder="Repetições" required>
+    <input name="carga" placeholder="Carga (Ex: 10kg)" required>
 
     <!-- Botão -->
     <button type="submit">Salvar Treino</button>

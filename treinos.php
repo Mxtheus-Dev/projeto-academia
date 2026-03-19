@@ -88,6 +88,7 @@ $treinos = $sql->fetchAll();
             <th>Exercício</th>
             <th>Séries</th>
             <th>Repetições</th>
+            <th>Carga</th>
             <th>Status</th>
         </tr>
 
@@ -98,6 +99,7 @@ $treinos = $sql->fetchAll();
                 <td><?= htmlspecialchars($treino['exercicio']) ?></td>
                 <td><?= htmlspecialchars($treino['series']) ?></td>
                 <td><?= htmlspecialchars($treino['repeticoes']) ?></td>
+                <td><?= htmlspecialchars($treino['carga']) ?></td>
 
                 <!-- STATUS -->
                 <td>
