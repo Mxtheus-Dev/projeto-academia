@@ -39,7 +39,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ============================ -->
 <header>
 
-    <h1>Physical Center</h1>
+    <h1>Academia Physical Center</h1>
 
     <nav>
         <a href="index.php">Home</a>

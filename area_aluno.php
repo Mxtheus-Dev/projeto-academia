@@ -59,7 +59,7 @@ if (!$user) {
 <header>
     <div class="header-container">
 
-        <h1 class="logo">Physical Center</h1>
+        <h1 class="logo">Academia Physical Center</h1>
 
         <div class="header-buttons">
 
