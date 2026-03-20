@@ -328,3 +328,47 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================
+   FOOTER PROFISSIONAL
+============================ */
+
+.footer {
+    background: #000;
+    padding: 60px 20px 20px;
+    margin-top: 60px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-box {
+    flex: 1;
+    min-width: 220px;
+}
+
+.footer-box h3 {
+    color: #ffd000;
+    margin-bottom: 15px;
+}
+
+.footer-box p {
+    font-size: 14px;
+    margin: 6px 0;
+    color: #ccc;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    font-size: 14px;
+    color: #aaa;
+}

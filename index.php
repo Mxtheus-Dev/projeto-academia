@@ -127,8 +127,49 @@ $planos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!-- ============================
      RODAPÉ
 ============================ -->
-<footer>
-    <p>Academia Physical Center - 2026 - Porto Alegre</p>
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <!-- SOBRE -->
+        <div class="footer-box">
+            <h3>Academia Physical Center</h3>
+            <p>
+                Academia focada em resultados, oferecendo estrutura moderna 
+                e treinos personalizados para todos os níveis.
+            </p>
+        </div>
+
+        <!-- CONTATO -->
+        <div class="footer-box">
+            <h3>Contato</h3>
+            <p>📞 (51) 99999-9999</p>
+            <p>📧 contato@academiaphysicalcenter.com</p>
+            <p>📍 Porto Alegre - RS</p>
+        </div>
+
+        <!-- HORÁRIO -->
+        <div class="footer-box">
+            <h3>Horário</h3>
+            <p>Seg - Sex: 06:00 às 22:00</p>
+            <p>Sábado: 08:00 às 18:00</p>
+            <p>Domingo: Fechado</p>
+        </div>
+
+        <!-- REDES -->
+        <div class="footer-box">
+            <h3>Redes Sociais</h3>
+            <p>Instagram: @academiaphysicalcenter</p>
+            <p>Facebook: /academiaphysicalcenter</p>
+            <p>WhatsApp: (51) 99999-9999</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>Academia Physical Center</p>
+    </div>
+
 </footer>
 
 </body>
