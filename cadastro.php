@@ -4,17 +4,24 @@
 ============================ */
 require "database.php";
 
+
 /* ============================
    BUSCAR PLANOS
 ============================ */
 $planos = $db->query("SELECT * FROM planos")->fetchAll();
+
+
+/* ============================
+   CAPTURAR PLANO (URL OU POST)
+============================ */
+$plano = $_GET['plano'] ?? ($_POST['plano'] ?? '');
+
 
 /* ============================
    PROCESSAR FORMULÁRIO
 ============================ */
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    // Captura os dados
     $nome     = $_POST['nome'] ?? '';
     $email    = $_POST['email'] ?? '';
     $senha    = $_POST['senha'] ?? '';
@@ -25,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     /* ============================
        VALIDAÇÃO
     ============================ */
-    if (empty($nome) || empty($email) || empty($senha)) {
+    if (empty($nome) || empty($email) || empty($senha) || empty($plano)) {
         $erro = "Preencha todos os campos.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $erro = "Email inválido.";
@@ -70,13 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     $plano
                 ]);
 
-                // Redireciona com sucesso
                 header("Location: login.php?sucesso=1");
                 exit;
 
             } catch (PDOException $e) {
 
-                // CASO PASSE NA VERIFICAÇÃO MAS DÊ ERRO (extra segurança)
                 if ($e->getCode() == 23000) {
                     $erro = "Este email já está cadastrado.";
                 } else {
@@ -91,9 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastro</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Cadastro</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -130,19 +135,21 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <input type="number" name="idade" placeholder="Idade" value="<?= htmlspecialchars($idade ?? '') ?>">
 
+    <!-- SELECT DE PLANOS -->
     <select name="plano" required>
 
-    <option value="">Selecione um plano</option>
+        <option value="">Selecione um plano</option>
 
-    <?php foreach ($planos as $p): ?>
-        <option 
-            value="<?= htmlspecialchars($p['nome']) ?>"
-            <?= (isset($plano) && $plano == $p['nome']) ? 'selected' : '' ?>
-        >
-            <?= htmlspecialchars($p['nome']) ?> 
-            (R$ <?= number_format($p['preco'], 2, ',', '.') ?>)
-        </option>
-    <?php endforeach; ?>
+        <?php foreach ($planos as $p): ?>
+            <option 
+                value="<?= htmlspecialchars($p['nome']) ?>"
+                <?= ($plano == $p['nome']) ? 'selected' : '' ?>
+            >
+                <?= htmlspecialchars($p['nome']) ?> 
+                - <?= $p['duracao'] ?> dias 
+                (R$ <?= number_format($p['preco'], 2, ',', '.') ?>)
+            </option>
+        <?php endforeach; ?>
 
     </select>
 

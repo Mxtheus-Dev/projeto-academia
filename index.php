@@ -89,7 +89,9 @@ $planos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         R$ <?= number_format($plano['preco'], 2, ',', '.') ?>
                     </p>
 
+                    <a href="planos.php?plano=<?= $plano['id'] ?>">
                     <button type="button">Assinar</button>
+                    </a>
 
                 </div>
             <?php endforeach; ?>
