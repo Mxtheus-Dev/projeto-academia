@@ -4,6 +4,10 @@
 ============================ */
 require "database.php";
 
+/* ============================
+   BUSCAR PLANOS
+============================ */
+$planos = $db->query("SELECT * FROM planos")->fetchAll();
 
 /* ============================
    PROCESSAR FORMULÁRIO
@@ -16,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $senha    = $_POST['senha'] ?? '';
     $telefone = $_POST['telefone'] ?? '';
     $idade    = $_POST['idade'] ?? '';
+    $plano    = $_POST['plano'] ?? '';
 
     /* ============================
        VALIDAÇÃO
@@ -62,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     $senhaHash,
                     $telefone,
                     $idade,
-                    'Mensal'
+                    $plano
                 ]);
 
                 // Redireciona com sucesso
@@ -124,6 +129,22 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <input name="telefone" placeholder="Telefone" value="<?= htmlspecialchars($telefone ?? '') ?>">
 
     <input type="number" name="idade" placeholder="Idade" value="<?= htmlspecialchars($idade ?? '') ?>">
+
+    <select name="plano" required>
+
+    <option value="">Selecione um plano</option>
+
+    <?php foreach ($planos as $p): ?>
+        <option 
+            value="<?= htmlspecialchars($p['nome']) ?>"
+            <?= (isset($plano) && $plano == $p['nome']) ? 'selected' : '' ?>
+        >
+            <?= htmlspecialchars($p['nome']) ?> 
+            (R$ <?= number_format($p['preco'], 2, ',', '.') ?>)
+        </option>
+    <?php endforeach; ?>
+
+    </select>
 
     <button type="submit">Cadastrar</button>
 
