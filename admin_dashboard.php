@@ -99,6 +99,10 @@ $treinos = $sql->fetchAll();
 <td>
 <div class="acoes">
 
+<a href="editar_usuario.php?id=<?= $user['id']; ?>">
+    <button style="background:#3b82f6;color:white;">Editar</button>
+</a>
+
 <a href="excluir_usuario.php?id=<?= $user['id']; ?>" 
    onclick="return confirm('Excluir aluno?')">
     <button class="btn-excluir">Excluir</button>
@@ -163,6 +167,10 @@ $treinos = $sql->fetchAll();
 <!-- AÇÕES -->
 <td>
 <div class="acoes">
+
+<a href="editar_treino.php?id=<?= $t['id'] ?>">
+    <button style="background:#3b82f6;color:white;">Editar</button>
+</a>
 
 <a href="concluir_treino.php?id=<?= $t['id'] ?>">
     <button class="btn-concluir">Concluir</button>
