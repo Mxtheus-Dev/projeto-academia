@@ -57,7 +57,7 @@ $treinos = $sql->fetchAll();
         <div class="header-buttons">
 
             <a href="area_aluno.php">
-                <button type="button">Área do Aluno</button>
+                <button type="button">Voltar</button>
             </a>
 
             <a href="logout.php">
